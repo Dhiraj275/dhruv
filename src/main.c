@@ -45,7 +45,7 @@ int main() {
     *strchr(f, ' ') = 0;
     char filename[512];
   
-    if(f[0]=='/'){
+    if(f[strlen(f)-1]=='/'){
       f="index.html";
     }
     else{
