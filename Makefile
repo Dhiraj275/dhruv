@@ -1,18 +1,21 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -O2
-TARGET = server
 
-SRC = $(wildcard *.c)
-OBJ = $(SRC:.c=.o)
+CC     = gcc
+CFLAGS = -Wall -Wextra -O2
+
+SRC    = $(wildcard src/*.c) $(wildcard utils/*c)
+OBJ    = $(SRC:.c=.o)
+BIN    = server
 
 all: server client
 
+server: $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(BIN)
 
-server: server.c
-	$(CC) $(CFLAGS) server.c -o server	
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 client: client.c
-	$(CC) $(CFLAGS) client.c -o client
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf client server
+	rm -f $(OBJ) $(BIN) client
