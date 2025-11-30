@@ -2,115 +2,100 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern Form</title>
-  <link rel="stylesheet" href="./main.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card {
-      background: white;
-      padding: 25px;
-      width: 350px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      margin-top: 0;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      font-size: 14px;
-      font-weight: 600;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      outline: none;
-      transition: 0.2s;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: #4a90e2;
-      box-shadow: 0 0 3px rgba(74, 144, 226, 0.4);
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #3a78c7;
-    }
-
-    .msg {
-      margin-top: 12px;
-      text-align: center;
-      font-size: 14px;
-      display: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dhruv HTTP Server</title>
+  <link rel="stylesheet" href="/main.css">
 </head>
 
 <body>
+  <div class="container">
+    <header>
+      <div class="logo">💻 DHRUV</div>
+      <a href="https://github.com/Dhiraj275/dhruv" class="github-link" target="_blank">View on GitHub →</a>
+    </header>
 
-  <div class="card">
-    <h2>Contact Form</h2>
-
-    <form id="contactForm">
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="name" required />
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Dhruv HTTP Server</h1>
+        <div class="badge-container">
+          <span class="badge badge-warning">⚠️ Educational Project</span>
+          <span class="badge badge-educational">C + Sockets</span>
+        </div>
+        <p>A barebones HTTP server written in C for Linux. Built from scratch to master sockets, low-level networking,
+          and the core mechanics of HTTP.</p>
+        <div class="buttons">
+          <a href="https://github.com/Dhiraj275/dhruv" class="btn btn-primary" target="_blank">Get Started</a>
+          <button class="btn btn-secondary" onclick="scrollToInfo()">Learn More</button>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="email" required />
+      <div class="hero-visual">
+        <div class="network-container">
+          <div class="grid-overlay"></div>
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+
+          <div class="node"></div>
+          <div class="node"></div>
+          <div class="node"></div>
+          <div class="node"></div>
+          <div class="node"></div>
+
+          <div class="code-display">
+            <div class="code-header">
+              <div class="code-dot dot-red"></div>
+              <div class="code-dot dot-yellow"></div>
+              <div class="code-dot dot-green"></div>
+              <div class="code-title">network.c</div>
+            </div>
+            <div class="code-line"><span class="keyword">int</span> <span class="function">socket_fd</span> =
+              socket(...);</div>
+            <div class="code-line"><span class="function">bind</span>(socket_fd, ...);</div>
+            <div class="code-line"><span class="function">listen</span>(socket_fd, <span class="string">10</span>);
+            </div>
+            <div class="code-line"><span class="comment">// Accept connections</span></div>
+            <div class="code-line"><span class="keyword">while</span> (<span class="string">1</span>) {</div>
+            <div class="code-line">&nbsp;&nbsp;<span class="function">accept</span>(socket_fd, ...);</div>
+            <div class="code-line">}</div>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="form-group">
-        <label>Message</label>
-        <textarea id="message" rows="4" required></textarea>
+    <section class="info-section" id="info">
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>⚠️ Not for Production</h3>
+          <p>This server is an educational project and lacks critical security features. It may contain vulnerabilities
+            like buffer overflows and improper input validation. Use only in controlled environments.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>✨ What It Does</h3>
+          <ul class="tech-list">
+            <li>Handles basic HTTP/1.1 requests</li>
+            <li>Serves static content from public/</li>
+            <li>Built with raw Linux TCP sockets</li>
+            <li>Pure C implementation</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>💡 Learning Goals</h3>
+          <ul class="tech-list">
+            <li>Socket programming fundamentals</li>
+            <li>TCP/IP connection management</li>
+            <li>HTTP protocol parsing</li>
+            <li>Low-level C memory management</li>
+          </ul>
+        </div>
       </div>
-
-      <button type="submit">Submit</button>
-
-      <div class="msg" id="resultMsg"></div>
-    </form>
+    </section>
   </div>
 
-  <script src="./index.js"></script>
+<script src="/index.js"></script>
 </body>
 
 </html>

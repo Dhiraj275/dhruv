@@ -1,1 +1,190 @@
-<h1>About Page</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhruv HTTP Server - About</title>
+    <link rel="stylesheet" href="../main.css"> <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <h1 class="logo">Dhruv</h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/" class="active">About</a></li>
+                    <li><a href="/#features">Features</a></li>
+                    <li><a href="/#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="about-content">
+            <div class="container">
+                <h2>About Dhruv: A Journey into C Networking</h2>
+                <p>
+                    <strong>Dhruv</strong> (named after the North Star, symbolizing guidance and a fundamental point of reference) is a personal project aimed at demystifying the intricate world of low-level networking and the HTTP protocol. Built entirely from scratch in **C for Linux**, this server eschews frameworks and libraries to provide a raw, unadulterated understanding of how web servers truly function.
+                </p>
+
+                <h3>The Motivation</h3>
+                <p>
+                    In an era dominated by high-level abstractions and powerful frameworks, it's easy to lose sight of the foundational technologies that power the internet. Dhruv was born from a desire to strip away these layers and confront the core mechanics:
+                </p>
+                <ul>
+                    <li><strong>Mastering Sockets:</strong> To gain hands-on experience with the POSIX socket API, including `socket()`, `bind()`, `listen()`, `accept()`, `send()`, and `recv()`.</li>
+                    <li><strong>Understanding HTTP/1.1:</strong> To manually parse HTTP request lines and headers, and construct valid HTTP responses, deepening the understanding of the protocol's stateless nature.</li>
+                    <li><strong>Low-Level C Programming:</strong> To reinforce C programming skills, focusing on memory management, string manipulation, error handling, and system calls in a real-world application.</li>
+                </ul>
+
+                <h3>What Dhruv Does (Currently)</h3>
+                <p>
+                    At its current stage, Dhruv is a barebones server capable of:
+                </p>
+                <ul>
+                    <li>Serving static files (like this `index.html`, CSS, and JavaScript) from its `public/` directory.</li>
+                    <li>Handling basic HTTP GET requests.</li>
+                    <li>Managing multiple client connections (though currently in a simple, blocking manner which is part of the learning curve).</li>
+                </ul>
+
+                <h3>Future Aspirations (and current limitations)</h3>
+                <p>
+                    This project is a continuous learning experience. Future goals include:
+                </p>
+                <ul>
+                    <li>Implementing non-blocking I/O using `epoll` for better concurrency.</li>
+                    <li>Adding robust error handling and logging.</li>
+                    <li>Support for more HTTP methods (POST, HEAD).</li>
+                    <li>Basic routing capabilities.</li>
+                    <li>Exploring more advanced security considerations (though always prioritizing educational clarity).</li>
+                </ul>
+                <p class="warning-note">
+                    <strong>Important:</strong> Dhruv is an **educational project** and is **not secure for production use**. It is likely to contain vulnerabilities and is intended solely for learning and experimentation in controlled environments.
+                </p>
+                <p>
+                    Thank you for exploring Dhruv. It's a testament to the power of foundational computing and the joy of building from scratch.
+                </p>
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="https://github.com/yourusername/dhruv-server" class="btn btn-primary" target="_blank">View Project on GitHub</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2023 Dhruv HTTP Server. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../index.js"></script> </body>
+</html>
+
+
+<!-- <!DOCTYPE html> -->
+<!-- <html lang="en"> -->
+<!---->
+<!-- <head> -->
+<!--   <meta charset="UTF-8"> -->
+<!--   <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<!--   <title>Dhruv HTTP Server</title> -->
+<!--   <link rel="stylesheet" href="/main.css"> -->
+<!-- </head> -->
+<!---->
+<!-- <body> -->
+<!--   <div class="container"> -->
+<!--     <header> -->
+<!--       <div class="logo">💻 DHRUV</div> -->
+<!--       <a href="https://github.com/Dhiraj275/dhruv" class="github-link" target="_blank">View on GitHub →</a> -->
+<!--     </header> -->
+<!---->
+<!--     <section class="hero"> -->
+<!--       <div class="hero-content"> -->
+<!--         <h1>Dhruv HTTP Server</h1> -->
+<!--         <div class="badge-container"> -->
+<!--           <span class="badge badge-warning">⚠️ Educational Project</span> -->
+<!--           <span class="badge badge-educational">C + Sockets</span> -->
+<!--         </div> -->
+<!--         <p>A barebones HTTP server written in C for Linux. Built from scratch to master sockets, low-level networking, -->
+<!--           and the core mechanics of HTTP.</p> -->
+<!--         <div class="buttons"> -->
+<!--           <a href="https://github.com/Dhiraj275/dhruv" class="btn btn-primary" target="_blank">Get Started</a> -->
+<!--           <button class="btn btn-secondary" onclick="scrollToInfo()">Learn More</button> -->
+<!--         </div> -->
+<!--       </div> -->
+<!---->
+<!--       <div class="hero-visual"> -->
+<!--         <div class="network-container"> -->
+<!--           <div class="grid-overlay"></div> -->
+<!--           <div class="orb orb-1"></div> -->
+<!--           <div class="orb orb-2"></div> -->
+<!--           <div class="orb orb-3"></div> -->
+<!---->
+<!--           <div class="node"></div> -->
+<!--           <div class="node"></div> -->
+<!--           <div class="node"></div> -->
+<!--           <div class="node"></div> -->
+<!--           <div class="node"></div> -->
+<!---->
+<!--           <div class="code-display"> -->
+<!--             <div class="code-header"> -->
+<!--               <div class="code-dot dot-red"></div> -->
+<!--               <div class="code-dot dot-yellow"></div> -->
+<!--               <div class="code-dot dot-green"></div> -->
+<!--               <div class="code-title">network.c</div> -->
+<!--             </div> -->
+<!--             <div class="code-line"><span class="keyword">int</span> <span class="function">socket_fd</span> = -->
+<!--               socket(...);</div> -->
+<!--             <div class="code-line"><span class="function">bind</span>(socket_fd, ...);</div> -->
+<!--             <div class="code-line"><span class="function">listen</span>(socket_fd, <span class="string">10</span>); -->
+<!--             </div> -->
+<!--             <div class="code-line"><span class="comment">// Accept connections</span></div> -->
+<!--             <div class="code-line"><span class="keyword">while</span> (<span class="string">1</span>) {</div> -->
+<!--             <div class="code-line">&nbsp;&nbsp;<span class="function">accept</span>(socket_fd, ...);</div> -->
+<!--             <div class="code-line">}</div> -->
+<!--           </div> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </section> -->
+<!---->
+<!--     <section class="info-section" id="info"> -->
+<!--       <div class="info-grid"> -->
+<!--         <div class="info-card"> -->
+<!--           <h3>⚠️ Not for Production</h3> -->
+<!--           <p>This server is an educational project and lacks critical security features. It may contain vulnerabilities -->
+<!--             like buffer overflows and improper input validation. Use only in controlled environments.</p> -->
+<!--         </div> -->
+<!---->
+<!--         <div class="info-card"> -->
+<!--           <h3>✨ What It Does</h3> -->
+<!--           <ul class="tech-list"> -->
+<!--             <li>Handles basic HTTP/1.1 requests</li> -->
+<!--             <li>Serves static content from public/</li> -->
+<!--             <li>Built with raw Linux TCP sockets</li> -->
+<!--             <li>Pure C implementation</li> -->
+<!--           </ul> -->
+<!--         </div> -->
+<!---->
+<!--         <div class="info-card"> -->
+<!--           <h3>💡 Learning Goals</h3> -->
+<!--           <ul class="tech-list"> -->
+<!--             <li>Socket programming fundamentals</li> -->
+<!--             <li>TCP/IP connection management</li> -->
+<!--             <li>HTTP protocol parsing</li> -->
+<!--             <li>Low-level C memory management</li> -->
+<!--           </ul> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </section> -->
+<!--   </div> -->
+<!---->
+<!-- <script src="/index.js"></script> -->
+<!-- </body> -->
+<!---->
+<!-- </html> -->
