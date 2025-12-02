@@ -3,9 +3,15 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
+#include <stdint.h>
 #define CRLF "\r\n"
 #define BUFFER_SIZE 4096
+
+typedef struct {
+  char *status;
+  char *reason;
+  char *version;
+} state_line_t;
 
 typedef struct {
   char *method;
@@ -13,6 +19,12 @@ typedef struct {
   char *host;
   char *user_agent;
 } http_request;
+
+typedef struct {
+  state_line_t state_line;
+  uint32_t content_length;
+  char *content_type;
+} http_response;
 
 void cleanup(char **buf) {
   free(*buf);
@@ -93,6 +105,52 @@ free_alloc:
   return -1;
 }
 
+char *buffer = "HTTP/1.1 200 OK\r\n"
+               "Content-Length: 5\r\n"
+               "Content-Type: text/plain\r\n"
+               "\r\n"
+               "hello";
+
+// create http header
+char *create_http_header(char **content, http_response *res) { 
+  res->state_line.status  =  "200";
+  res->state_line.reason  =  "OK";
+  res->state_line.version =  "HTTP/1.1";
+  
+  if(content==NULL){
+    res->state_line.status = "500";
+    res->state_line.reason = "Server Error";
+  }
+  
+  res->content_length = strlen(*content);
+  res->content_type = "text/html";
+  
+  char *response_string = calloc(res->content_length+100, sizeof(char));
+  strcat(response_string, res->state_line.version);
+  strcat(response_string, " ");
+  strcat(response_string, res->state_line.status);
+  strcat(response_string, " ");
+  strcat(response_string, CRLF);
+  strcat(response_string, "Content-Type: ");
+  strcat(response_string, res->content_type);
+  strcat(response_string, CRLF);
+  strcat(response_string, "Content-Length: ");
+  char *content_len_str = calloc(33, sizeof(char));
+  if(content_len_str == NULL){
+    return NULL;
+  }
+  sprintf(content_len_str, "%d", res->content_length);
+  strcat(response_string, content_len_str);
+
+  strcat(response_string, CRLF);
+  strcat(response_string, CRLF);
+
+  strcat(response_string, *content);
+  strcat(response_string, CRLF);
+
+  return response_string; 
+}
+
 // handle client
 int handle_client(int client_sock) {
   int recived_bytes;
@@ -108,19 +166,17 @@ int handle_client(int client_sock) {
       return -1;
     }
 
-    // printing the http_request
-    // printf("the requested method is: %s \n", req.method);
-    // printf("the requested uri is: %s\n", req.uri);
-    // printf("the requested host is: %s\n", req.host);
-    // printf("the requested user agent is: %s\n", req.user_agent);
-
-
-    char *buffer = "HTTP/1.1 200 OK\r\n"
-                   "Content-Length: 5\r\n"
-                   "Content-Type: text/plain\r\n"
-                   "\r\n"
-                   "hello";
+    http_response res ={0};
+    char *content = "Hello world";
+    char *buffer = create_http_header(&content, &res);
     send(client_sock, buffer, strlen(buffer), 0);
+   
+
+    cleanup(&res.method);
+    cleanup(&req.uri);
+    cleanup(&req.host);
+    cleanup(&req.user_agent);
+
 
     cleanup(&req.method);
     cleanup(&req.uri);
