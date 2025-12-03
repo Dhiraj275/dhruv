@@ -12,11 +12,6 @@
 #include "../include/network.h"
 #include "../include/handle_client.h"
 
-//todo: move this to saparate header file. utils.h maybe
-const char *get_mime_type(const char *path);
-bool file_exists(char *path);
-bool resolve_path(const char *path, char *out);
-
 int main() {
   int server_socket = create_server_socket_fd();
 
