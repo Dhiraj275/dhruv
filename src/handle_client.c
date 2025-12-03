@@ -11,7 +11,7 @@ typedef struct {
   char *status;
   char *reason;
   char *version;
-} state_line_t;
+} state_line;
 
 typedef struct {
   char *method;
@@ -21,7 +21,7 @@ typedef struct {
 } http_request;
 
 typedef struct {
-  state_line_t state_line;
+  state_line status_line;
   uint32_t content_length;
   char *content_type;
 } http_response;
@@ -113,22 +113,22 @@ char *buffer = "HTTP/1.1 200 OK\r\n"
 
 // create http header
 char *create_http_header(char **content, http_response *res) { 
-  res->state_line.status  =  "200";
-  res->state_line.reason  =  "OK";
-  res->state_line.version =  "HTTP/1.1";
+  res->status_line.status  =  "200";
+  res->status_line.reason  =  "OK";
+  res->status_line.version =  "HTTP/1.1";
   
   if(content==NULL){
-    res->state_line.status = "500";
-    res->state_line.reason = "Server Error";
+    res->status_line.status = "500";
+    res->status_line.reason = "Server Error";
   }
   
   res->content_length = strlen(*content);
   res->content_type = "text/html";
   
   char *response_string = calloc(res->content_length+100, sizeof(char));
-  strcat(response_string, res->state_line.version);
+  strcat(response_string, res->status_line.version);
   strcat(response_string, " ");
-  strcat(response_string, res->state_line.status);
+  strcat(response_string, res->status_line.status);
   strcat(response_string, " ");
   strcat(response_string, CRLF);
   strcat(response_string, "Content-Type: ");
@@ -172,7 +172,7 @@ int handle_client(int client_sock) {
     send(client_sock, buffer, strlen(buffer), 0);
    
 
-    cleanup(&res.method);
+    cleanup(&req.method);
     cleanup(&req.uri);
     cleanup(&req.host);
     cleanup(&req.user_agent);
