@@ -177,11 +177,6 @@ int handle_client(int client_sock) {
     cleanup(&req.host);
     cleanup(&req.user_agent);
 
-
-    cleanup(&req.method);
-    cleanup(&req.uri);
-    cleanup(&req.host);
-    cleanup(&req.user_agent);
   }
 
   close(client_sock);
