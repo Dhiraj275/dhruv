@@ -156,7 +156,7 @@ int handle_client(int client_sock) {
   int recived_bytes;
   char recived_buffer[BUFFER_SIZE];
   while ((recived_bytes = recv(client_sock, recived_buffer,
-                               sizeof(recived_buffer), 0) > 0)) {
+                               sizeof(recived_buffer), 0)) > 0) {
     if (recived_bytes == -1) {
       return -1;
     }
