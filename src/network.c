@@ -21,7 +21,7 @@ int create_server_socket_fd(){
     return -1;
   }
   
-  if(listen(server_socket, 5)==-1){
+  if(listen(server_socket, 100)==-1){
     printf("listen: error");
     return -1;
   }

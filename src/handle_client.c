@@ -1,10 +1,12 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdint.h>
-
+#include <sys/sendfile.h>
+#include <sys/stat.h>
 #include "../include/util.h"
 #define CRLF "\r\n"
 #define BUFFER_SIZE 4096
@@ -141,14 +143,21 @@ char *create_http_header(char **content, http_response *res) {
     return NULL;
   }
   sprintf(content_len_str, "%d", res->content_length);
-  strcat(response_string, content_len_str);
-
+  strcat(response_string, content_len_str);  
+  strcat(response_string, CRLF);
+  //hardcoded headers
+  strcat(response_string, "Connection: close");
   strcat(response_string, CRLF);
   strcat(response_string, CRLF);
 
-  strcat(response_string, *content);
-  strcat(response_string, CRLF);
+  // strcat(response_string, *content);
+  // strcat(response_string, CRLF);
 
+  //clean up
+  free(content_len_str);
+  content_len_str = NULL;
+
+  //return response string
   return response_string; 
 }
 
@@ -156,8 +165,8 @@ char *create_http_header(char **content, http_response *res) {
 int handle_client(int client_sock) {
   int recived_bytes;
   char recived_buffer[BUFFER_SIZE];
-  while ((recived_bytes = recv(client_sock, recived_buffer,
-                               sizeof(recived_buffer), 0)) != 0) {
+  while ((recived_bytes = recv(client_sock, recived_buffer, sizeof(recived_buffer), 0)) != 0) {
+
     if (recived_bytes == -1) {
       return -1;
     }
@@ -188,16 +197,22 @@ int handle_client(int client_sock) {
       strcpy(path,"public/index.html");
     } 
     char *content = read_file(path);
+    // char *content = "Hello world";
     res.content_type = get_mime_type(path);
     char *buffer = create_http_header(&content, &res);
+    int fd = open(path, O_RDONLY);
     send(client_sock, buffer, strlen(buffer), 0);
-   
-
+    struct stat st;
+    stat(path, &st);
+    sendfile(client_sock,fd ,0, st.st_size);
+    //clean up request
     cleanup(&req.method);
     cleanup(&req.uri);
     cleanup(&req.host);
     cleanup(&req.user_agent);
-
+    //clean up response
+    cleanup(&buffer);
+    cleanup(&content); 
   }
 
   close(client_sock);
