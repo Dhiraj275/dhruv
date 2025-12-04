@@ -22,22 +22,23 @@ The repository is organized as follows:
 ```
 .
 ├── include/
-│   └── network.h         # Header for network-related functions and structures
-|
+│   ├── network.h         # Header for network-related functions and structures
+│   ├── handle_client.h   # Header for handle client functions
+│   └── network.h         # Header for util functions
+│
 ├── public/               # The document root for serving static files
-│   ├── about/
-│   │   └── index.html    # Example static page (e.g., /about/)
 │   ├── index.html        # Main landing page (e.g., /)
 │   ├── main.css          # Stylesheet
 │   └── index.js          # Client-side JavaScript
-|
+│
 ├── src/
 │   ├── main.c            # Entry point of the server
+│   ├── handle_client.h   # Implementation of handle client functions
 │   └── network.c         # Implementation of network functions (socket creation, listening, etc.)
-|
+│
 ├── utils/
 │   └── util.c            # Utility functions (e.g., string manipulation, logging)
-|
+│
 ├── .gitignore            # Files/directories to ignore in Git
 ├── Makefile              # Build instructions
 └── client.c              # Optional: A simple C client to test the server
