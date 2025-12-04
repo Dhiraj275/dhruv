@@ -1,13 +1,13 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <string.h>
-
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 // #define TEST_DRIVER 1
 
 // returns MIME type of given path
-const char *get_mime_type(const char *path) {
+char *get_mime_type(const char *path) {
   char *ext = strrchr(path, '.');
   ext++;
 
@@ -95,10 +95,32 @@ bool resolve_path(const char *path, char *out) {
 }
 
 bool file_exists(char *path) {
-  int n = snprintf(path, 512, "%s/%s", "public", path);
   struct stat st;
-  return stat(path, &st);
+  //return false if file does not exists
+  return !stat(path, &st);
 }
+
+
+char *read_file(const char *path){
+  FILE *f = fopen(path, "r");
+  if(!f) return NULL;
+
+  fseek(f,0,SEEK_END);
+  long size = ftell(f);
+  rewind(f); 
+
+  char *buffer = malloc(size+1);
+  if(buffer==NULL){ 
+    fclose(f);
+    return NULL;
+  }
+  fread(buffer, size, 1, f);
+  buffer[size] = '\0';
+
+  fclose(f);
+  return buffer;
+}
+  
 
 #ifdef TEST_DRIVER
 struct test_case {

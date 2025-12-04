@@ -4,6 +4,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdint.h>
+
+#include "../include/util.h"
 #define CRLF "\r\n"
 #define BUFFER_SIZE 4096
 
@@ -123,7 +125,6 @@ char *create_http_header(char **content, http_response *res) {
   }
   
   res->content_length = strlen(*content);
-  res->content_type = "text/html";
   
   char *response_string = calloc(res->content_length+100, sizeof(char));
   strcat(response_string, res->status_line.version);
@@ -156,18 +157,38 @@ int handle_client(int client_sock) {
   int recived_bytes;
   char recived_buffer[BUFFER_SIZE];
   while ((recived_bytes = recv(client_sock, recived_buffer,
-                               sizeof(recived_buffer), 0)) > 0) {
+                               sizeof(recived_buffer), 0)) != 0) {
     if (recived_bytes == -1) {
       return -1;
     }
-    // recived_buffer[recived_bytes] = 0;
+    recived_buffer[recived_bytes] = '\0';
     http_request req = {0};
     if (parse_http_request(recived_buffer, &req) == -1) {
       return -1;
     }
 
     http_response res ={0};
-    char *content = "Hello world";
+   
+
+    char path[512];
+
+    if(!resolve_path(req.uri, path)){
+      send(client_sock, "HTTP/1.1 400 Bad Request\r\n", 30, 0);
+      close(client_sock);
+      return 0;
+    }
+    
+   if(!file_exists(path)){
+      send(client_sock, "HTTP/1.1 404 File Not Found\r\n", 30, 0);
+      close(client_sock);
+      return 0;
+    }
+    //spaghetti code i will fix it later
+    if(path[strlen(path)-1]=='/'){
+      strcpy(path,"public/index.html");
+    } 
+    char *content = read_file(path);
+    res.content_type = get_mime_type(path);
     char *buffer = create_http_header(&content, &res);
     send(client_sock, buffer, strlen(buffer), 0);
    
