@@ -116,17 +116,10 @@ char *buffer = "HTTP/1.1 200 OK\r\n"
                "hello";
 
 // create http header
-char *create_http_header(char **content, http_response *res) { 
+char *create_http_header(http_response *res) { 
   res->status_line.status  =  "200";
   res->status_line.reason  =  "OK";
   res->status_line.version =  "HTTP/1.1";
-  
-  if(content==NULL){
-    res->status_line.status = "500";
-    res->status_line.reason = "Server Error";
-  }
-  
-  res->content_length = strlen(*content);
   
   char *response_string = calloc(res->content_length+100, sizeof(char));
   strcat(response_string, res->status_line.version);
@@ -145,15 +138,9 @@ char *create_http_header(char **content, http_response *res) {
   sprintf(content_len_str, "%d", res->content_length);
   strcat(response_string, content_len_str);  
   strcat(response_string, CRLF);
-  //hardcoded headers
   strcat(response_string, "Connection: close");
   strcat(response_string, CRLF);
   strcat(response_string, CRLF);
-
-  // strcat(response_string, *content);
-  // strcat(response_string, CRLF);
-
-  //clean up
   free(content_len_str);
   content_len_str = NULL;
 
@@ -196,15 +183,17 @@ int handle_client(int client_sock) {
     if(path[strlen(path)-1]=='/'){
       strcpy(path,"public/index.html");
     } 
-    char *content = read_file(path);
-    // char *content = "Hello world";
-    res.content_type = get_mime_type(path);
-    char *buffer = create_http_header(&content, &res);
-    int fd = open(path, O_RDONLY);
-    send(client_sock, buffer, strlen(buffer), 0);
+
     struct stat st;
     stat(path, &st);
+    res.content_type = get_mime_type(path);
+    res.content_length = (uint32_t)st.st_size; 
+    char *buffer = create_http_header(&res);
+    int fd = open(path, O_RDONLY);
+    send(client_sock, buffer, strlen(buffer), 0);
     sendfile(client_sock,fd ,0, st.st_size);
+    
+    close(fd);
     //clean up request
     cleanup(&req.method);
     cleanup(&req.uri);
@@ -212,7 +201,6 @@ int handle_client(int client_sock) {
     cleanup(&req.user_agent);
     //clean up response
     cleanup(&buffer);
-    cleanup(&content); 
   }
 
   close(client_sock);

@@ -9,10 +9,10 @@ BIN    = server
 all: server client
 
 server: $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(BIN) 
+	$(CC) $(CFLAGS) $(OBJ) -o $(BIN) -g
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) -c $< -o $@ -g 
 
 client: client.c
 	$(CC) $(CFLAGS) $< -o $@
