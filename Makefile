@@ -2,7 +2,7 @@
 CC     = gcc
 CFLAGS = -Wall -Wextra -O2
 
-SRC    = $(wildcard src/*.c) $(wildcard utils/*c)
+SRC    = $(wildcard src/*.c) 
 OBJ    = $(SRC:.c=.o)
 BIN    = server
 

@@ -24,7 +24,7 @@ The repository is organized as follows:
 ├── include/
 │   ├── network.h         # Header for network-related functions and structures
 │   ├── handle_client.h   # Header for handle client functions
-│   └── network.h         # Header for util functions
+│   └── util.h            # Header for util functions
 │
 ├── public/               # The document root for serving static files
 │   ├── index.html        # Main landing page (e.g., /)
@@ -33,10 +33,8 @@ The repository is organized as follows:
 │
 ├── src/
 │   ├── main.c            # Entry point of the server
-│   ├── handle_client.h   # Implementation of handle client functions
-│   └── network.c         # Implementation of network functions (socket creation, listening, etc.)
-│
-├── utils/
+│   ├── handle_client.c   # Implementation of handle client functions
+│   ├── network.c         # Implementation of network functions (socket creation, listening, etc.)
 │   └── util.c            # Utility functions (e.g., string manipulation, logging)
 │
 ├── .gitignore            # Files/directories to ignore in Git
