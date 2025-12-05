@@ -179,10 +179,6 @@ int handle_client(int client_sock) {
       close(client_sock);
       return 0;
     }
-    //spaghetti code i will fix it later
-    if(path[strlen(path)-1]=='/'){
-      strcpy(path,"public/index.html");
-    } 
 
     struct stat st;
     stat(path, &st);

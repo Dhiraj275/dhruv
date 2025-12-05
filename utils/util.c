@@ -57,7 +57,7 @@ void url_decode(const char *src, char *dst) {
 }
 
 // checks path's sanitiy
-bool is_path_sane(const char *path) {
+static bool is_path_sane(const char *path) {
   const char *str = path;
   size_t n = strnlen(str, 512);
   if (path[0] == '~')
@@ -75,14 +75,21 @@ bool is_path_sane(const char *path) {
 
 // resolve given path
 bool resolve_path(const char *path, char *out) {
-  char decoded[512];
+  char decoded[512] = {0};
   url_decode(path, decoded);
+  
+  if(strcmp(decoded, "/") == 0) 
+    strcpy(decoded, "index.html");
+  if(strchr(decoded, '.') == NULL) 
+    strcat(decoded, "/index.html"); 
+
   bool sane = is_path_sane(decoded);
   if (!sane) {
     return false;
   }
-
-  int n = snprintf(out, 512, "%s/%s", "public", decoded);
+  const char *p = decoded[0] == '/' ? decoded + 1 : decoded;
+  int n = snprintf(out, 512, "public/%s", p);
+  
   if (n < 0 || (size_t)n >= 512) {
     return false;
   }
@@ -115,7 +122,7 @@ char *read_file(const char *path){
     return NULL;
   }
   fread(buffer, size, 1, f);
-  buffer[size] = '\0';
+  buffer[size] = 0;
 
   fclose(f);
   return buffer;
