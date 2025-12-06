@@ -1,7 +1,9 @@
-#include "../include/log.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
+
+#include "../include/log.h"
+
 char const *log_type[LOG_LEVEL_LEN] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
 time_t timestamp;

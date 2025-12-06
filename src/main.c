@@ -1,13 +1,6 @@
 #include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <sys/sendfile.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include "../include/network.h"
 #include "../include/handle_client.h"
