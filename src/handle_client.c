@@ -1,13 +1,16 @@
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <stdint.h>
 #include <sys/sendfile.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
+#include <unistd.h>
+
+#include "../include/log.h"
 #include "../include/util.h"
+
 #define CRLF "\r\n"
 #define BUFFER_SIZE 4096
 
@@ -116,12 +119,12 @@ char *buffer = "HTTP/1.1 200 OK\r\n"
                "hello";
 
 // create http header
-char *create_http_header(http_response *res) { 
-  res->status_line.status  =  "200";
-  res->status_line.reason  =  "OK";
-  res->status_line.version =  "HTTP/1.1";
-  
-  char *response_string = calloc(res->content_length+100, sizeof(char));
+char *create_http_header(http_response *res) {
+  res->status_line.status = "200";
+  res->status_line.reason = "OK";
+  res->status_line.version = "HTTP/1.1";
+
+  char *response_string = calloc(res->content_length + 100, sizeof(char));
   strcat(response_string, res->status_line.version);
   strcat(response_string, " ");
   strcat(response_string, res->status_line.status);
@@ -132,11 +135,11 @@ char *create_http_header(http_response *res) {
   strcat(response_string, CRLF);
   strcat(response_string, "Content-Length: ");
   char *content_len_str = calloc(33, sizeof(char));
-  if(content_len_str == NULL){
+  if (content_len_str == NULL) {
     return NULL;
   }
   sprintf(content_len_str, "%d", res->content_length);
-  strcat(response_string, content_len_str);  
+  strcat(response_string, content_len_str);
   strcat(response_string, CRLF);
   strcat(response_string, "Connection: close");
   strcat(response_string, CRLF);
@@ -144,16 +147,15 @@ char *create_http_header(http_response *res) {
   free(content_len_str);
   content_len_str = NULL;
 
-  //return response string
-  return response_string; 
+  return response_string;
 }
 
 // handle client
 int handle_client(int client_sock) {
   int recived_bytes;
   char recived_buffer[BUFFER_SIZE];
-  while ((recived_bytes = recv(client_sock, recived_buffer, sizeof(recived_buffer), 0)) != 0) {
-
+  while ((recived_bytes = recv(client_sock, recived_buffer,
+                               sizeof(recived_buffer), 0)) != 0) {
     if (recived_bytes == -1) {
       return -1;
     }
@@ -162,40 +164,40 @@ int handle_client(int client_sock) {
     if (parse_http_request(recived_buffer, &req) == -1) {
       return -1;
     }
-
-    http_response res ={0};
-   
+    http_response res = {0};
 
     char path[512];
 
-    if(!resolve_path(req.uri, path)){
+    if (!resolve_path(req.uri, path)) {
       send(client_sock, "HTTP/1.1 400 Bad Request\r\n", 30, 0);
       close(client_sock);
+      dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 400", req.method, req.uri);
       return 0;
     }
-    
-   if(!file_exists(path)){
+
+    if (!file_exists(path)) {
       send(client_sock, "HTTP/1.1 404 File Not Found\r\n", 30, 0);
       close(client_sock);
+      dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 404", req.method, req.uri);
       return 0;
     }
 
     struct stat st;
     stat(path, &st);
     res.content_type = get_mime_type(path);
-    res.content_length = (uint32_t)st.st_size; 
+    res.content_length = (uint32_t)st.st_size;
     char *buffer = create_http_header(&res);
     int fd = open(path, O_RDONLY);
     send(client_sock, buffer, strlen(buffer), 0);
-    sendfile(client_sock,fd ,0, st.st_size);
-    
+    sendfile(client_sock, fd, 0, st.st_size);
+    dv_log(LOG_INFO, "'%s %s HTTP/1.1' 200", req.method, req.uri);
     close(fd);
-    //clean up request
+    // clean up request
     cleanup(&req.method);
     cleanup(&req.uri);
     cleanup(&req.host);
     cleanup(&req.user_agent);
-    //clean up response
+    // clean up response
     cleanup(&buffer);
   }
 
