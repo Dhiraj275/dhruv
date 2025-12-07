@@ -46,6 +46,13 @@ void send_404(int client_sock, http_request *req) {
   send(client_sock, "HTTP/1.1 404 File Not Found\r\n", 30, 0);
   dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 404", req->method, req->uri);
 }
+
+
+void send_405(int client_sock, http_request *req) {
+  send(client_sock, "HTTP/1.1 405 Method Not Allowed\r\n", 40, 0);
+  dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 405", req->method, req->uri);
+}
+
 int parse_http_request(char *msg, http_request *req) {
 
   char *saveptr;
@@ -163,9 +170,17 @@ int handle_client(int client_sock) {
     }
     recived_buffer[recived_bytes] = '\0';
     http_request req = {0};
+    
     if (parse_http_request(recived_buffer, &req) == -1) {
       return -1;
     }
+    
+    if(strcmp(req.method, "GET")!=0){
+      send_405(client_sock, &req);
+      close(client_sock);
+      return 0;
+    }
+
     http_response res = {0};
 
     char path[512];
