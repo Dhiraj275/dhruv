@@ -38,6 +38,14 @@ void cleanup(char **buf) {
   *buf = NULL;
 }
 
+void send_400(int client_sock, http_request *req) {
+  send(client_sock, "HTTP/1.1 400 Bad Request\r\n", 30, 0);
+  dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 400", req->method, req->uri);
+}
+void send_404(int client_sock, http_request *req) {
+  send(client_sock, "HTTP/1.1 404 File Not Found\r\n", 30, 0);
+  dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 404", req->method, req->uri);
+}
 int parse_http_request(char *msg, http_request *req) {
 
   char *saveptr;
@@ -112,12 +120,6 @@ free_alloc:
   return -1;
 }
 
-char *buffer = "HTTP/1.1 200 OK\r\n"
-               "Content-Length: 5\r\n"
-               "Content-Type: text/plain\r\n"
-               "\r\n"
-               "hello";
-
 // create http header
 char *create_http_header(http_response *res) {
   res->status_line.status = "200";
@@ -169,16 +171,15 @@ int handle_client(int client_sock) {
     char path[512];
 
     if (!resolve_path(req.uri, path)) {
-      send(client_sock, "HTTP/1.1 400 Bad Request\r\n", 30, 0);
+      // path tried path traversal
+      send_400(client_sock, &req);
       close(client_sock);
-      dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 400", req.method, req.uri);
       return 0;
     }
 
     if (!file_exists(path)) {
-      send(client_sock, "HTTP/1.1 404 File Not Found\r\n", 30, 0);
+      send_404(client_sock, &req);
       close(client_sock);
-      dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 404", req.method, req.uri);
       return 0;
     }
 
