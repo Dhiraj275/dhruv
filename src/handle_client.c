@@ -82,10 +82,10 @@ int parse_http_request(char *msg, http_request *req) {
     return -1;
   }
 
-  strncpy(req->uri, token2, token2_len);
+  strncpy(req->uri, token2, token2_len+1);
 
   // user_agent and host;
-  char *field;
+  char *field=NULL;
   while (line != NULL) {
     line = strtok_r(NULL, CRLF, &saveptr);
     char *token;
@@ -163,9 +163,9 @@ int handle_client(int client_sock) {
   char buffer[BUFFER_SIZE];
   size_t total = 0;
   while (1) {
-    
+
     n = recv(client_sock, buffer + total, sizeof(buffer) - total - 1, 0);
-   
+
     if (n <= 0) {
       close(client_sock);
       return 0;

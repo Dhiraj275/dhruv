@@ -10,7 +10,7 @@ int create_server_socket_fd() {
     return 1;
   }
 
-  struct sockaddr_in server_addr, client_addr;
+  struct sockaddr_in server_addr;
   server_addr.sin_port = htons(PORT);
   server_addr.sin_addr.s_addr = INADDR_ANY;
   server_addr.sin_family = AF_INET;

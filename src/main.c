@@ -9,9 +9,13 @@
 #include <unistd.h>
 
 static int server_socket;
+
 static volatile sig_atomic_t shutdown_requested = 0;
 
-void handle_sigint(int sig) { shutdown_requested = 1; }
+void handle_sigint(int sig) {
+  (void)sig;// coz of compiler's warning
+  shutdown_requested = 1; 
+}
 
 int main() {
   struct sigaction sa = {0};
