@@ -47,7 +47,6 @@ void send_404(int client_sock, http_request *req) {
   dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 404", req->method, req->uri);
 }
 
-
 void send_405(int client_sock, http_request *req) {
   send(client_sock, "HTTP/1.1 405 Method Not Allowed\r\n", 40, 0);
   dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 405", req->method, req->uri);
@@ -158,64 +157,76 @@ char *create_http_header(http_response *res) {
 
   return response_string;
 }
-
 // handle client
 int handle_client(int client_sock) {
-  int recived_bytes;
-  char recived_buffer[BUFFER_SIZE];
-  while ((recived_bytes = recv(client_sock, recived_buffer,
-                               sizeof(recived_buffer), 0)) != 0) {
-    if (recived_bytes == -1) {
-      return -1;
-    }
-    recived_buffer[recived_bytes] = '\0';
-    http_request req = {0};
+  size_t n;
+  char buffer[BUFFER_SIZE];
+  size_t total = 0;
+  while (1) {
     
-    if (parse_http_request(recived_buffer, &req) == -1) {
-      return -1;
-    }
-    
-    if(strcmp(req.method, "GET")!=0){
-      send_405(client_sock, &req);
+    n = recv(client_sock, buffer + total, sizeof(buffer) - total - 1, 0);
+   
+    if (n <= 0) {
       close(client_sock);
       return 0;
     }
 
-    http_response res = {0};
-
-    char path[512];
-
-    if (!resolve_path(req.uri, path)) {
-      // path tried path traversal
-      send_400(client_sock, &req);
+    total += n;
+    if (memmem(buffer, total, "\r\n\r\n", 4)) {
+      break;
+    }
+    if (total >= sizeof(buffer) - 1) {
       close(client_sock);
       return 0;
     }
-
-    if (!file_exists(path)) {
-      send_404(client_sock, &req);
-      close(client_sock);
-      return 0;
-    }
-
-    struct stat st;
-    stat(path, &st);
-    res.content_type = get_mime_type(path);
-    res.content_length = (uint32_t)st.st_size;
-    char *buffer = create_http_header(&res);
-    int fd = open(path, O_RDONLY);
-    send(client_sock, buffer, strlen(buffer), 0);
-    sendfile(client_sock, fd, 0, st.st_size);
-    dv_log(LOG_INFO, "'%s %s HTTP/1.1' 200", req.method, req.uri);
-    close(fd);
-    // clean up request
-    cleanup(&req.method);
-    cleanup(&req.uri);
-    cleanup(&req.host);
-    cleanup(&req.user_agent);
-    // clean up response
-    cleanup(&buffer);
   }
+  buffer[total] = '\0';
+  http_request req = {0};
+
+  if (parse_http_request(buffer, &req) == -1) {
+    return -1;
+  }
+
+  if (strcmp(req.method, "GET") != 0) {
+    send_405(client_sock, &req);
+    close(client_sock);
+    return 0;
+  }
+
+  http_response res = {0};
+
+  char path[512];
+
+  if (!resolve_path(req.uri, path)) {
+    // path tried path traversal
+    send_400(client_sock, &req);
+    close(client_sock);
+    return 0;
+  }
+
+  if (!file_exists(path)) {
+    send_404(client_sock, &req);
+    close(client_sock);
+    return 0;
+  }
+
+  struct stat st;
+  stat(path, &st);
+  res.content_type = get_mime_type(path);
+  res.content_length = (uint32_t)st.st_size;
+  char *response_header_buffer = create_http_header(&res);
+  int fd = open(path, O_RDONLY);
+  send(client_sock, response_header_buffer, strlen(response_header_buffer), 0);
+  sendfile(client_sock, fd, 0, st.st_size);
+  dv_log(LOG_INFO, "'%s %s HTTP/1.1' 200", req.method, req.uri);
+  close(fd);
+  // clean up request
+  cleanup(&req.method);
+  cleanup(&req.uri);
+  cleanup(&req.host);
+  cleanup(&req.user_agent);
+  // clean up response
+  cleanup(&response_header_buffer);
 
   close(client_sock);
   return 0;
