@@ -1,23 +1,34 @@
 #include <ctype.h>
 #include <stdbool.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 // #define TEST_DRIVER 1
 
+typedef struct {
+  const char *ext;
+  const char *mime;
+} mime_map;
+
+mime_map mime_type_map[] = {
+    {"html", "text/html"}, {"css", "text/css"},      {"js", "text/javascript"},
+    {"png", "image/png"},  {"jpg", "image/jpeg"},    {"jpeg", "image/jpeg"},
+    {"gif", "image/gif"},  {"svg", "image/svg+xml"}, {NULL, "text/plain"}};
+
 // returns MIME type of given path
-char *get_mime_type(const char *path) {
-  char *ext = strrchr(path, '.');
-  ext++;
+const char *get_mime_type(const char *path) {
+  char *dot = strrchr(path, '.');
+  if(dot==path || !dot){
+    return "plain/text";
+  }
+  const char* ext = dot+1; 
 
-  if (strcmp(ext, "html") == 0)
-    return "text/html";
-  if (strcmp(ext, "css") == 0)
-    return "text/css";
-  if (strcmp(ext, "js") == 0)
-    return "text/javascript";
-
+  for(int i = 0; i<sizeof(mime_type_map)/sizeof(mime_map); i++){
+    if(strcmp(ext, mime_type_map[i].ext) == 0){
+      return mime_type_map[i].mime;
+    }
+  }
   return "text/plain";
 }
 
@@ -77,11 +88,11 @@ static bool is_path_sane(const char *path) {
 bool resolve_path(const char *path, char *out) {
   char decoded[512] = {0};
   url_decode(path, decoded);
-  
-  if(strcmp(decoded, "/") == 0) 
+
+  if (strcmp(decoded, "/") == 0)
     strcpy(decoded, "index.html");
-  if(strchr(decoded, '.') == NULL) 
-    strcat(decoded, "/index.html"); 
+  if (strchr(decoded, '.') == NULL)
+    strcat(decoded, "/index.html");
 
   bool sane = is_path_sane(decoded);
   if (!sane) {
@@ -89,7 +100,7 @@ bool resolve_path(const char *path, char *out) {
   }
   const char *p = decoded[0] == '/' ? decoded + 1 : decoded;
   int n = snprintf(out, 512, "public/%s", p);
-  
+
   if (n < 0 || (size_t)n >= 512) {
     return false;
   }
@@ -103,21 +114,21 @@ bool resolve_path(const char *path, char *out) {
 
 bool file_exists(char *path) {
   struct stat st;
-  //return false if file does not exists
+  // return false if file does not exists
   return !stat(path, &st);
 }
 
-
-char *read_file(const char *path){
+char *read_file(const char *path) {
   FILE *f = fopen(path, "r");
-  if(!f) return NULL;
+  if (!f)
+    return NULL;
 
-  fseek(f,0,SEEK_END);
+  fseek(f, 0, SEEK_END);
   long size = ftell(f);
-  rewind(f); 
+  rewind(f);
 
-  char *buffer = malloc(size+1);
-  if(buffer==NULL){ 
+  char *buffer = malloc(size + 1);
+  if (buffer == NULL) {
     fclose(f);
     return NULL;
   }
@@ -127,7 +138,6 @@ char *read_file(const char *path){
   fclose(f);
   return buffer;
 }
-  
 
 #ifdef TEST_DRIVER
 struct test_case {
