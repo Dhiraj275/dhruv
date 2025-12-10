@@ -7,29 +7,31 @@
 // #define TEST_DRIVER 1
 
 typedef struct {
-  const char *ext;
-  const char *mime;
+  char *ext;
+  char *mime;
 } mime_map;
 
 mime_map mime_type_map[] = {
     {"html", "text/html"}, {"css", "text/css"},      {"js", "text/javascript"},
     {"png", "image/png"},  {"jpg", "image/jpeg"},    {"jpeg", "image/jpeg"},
-    {"gif", "image/gif"},  {"svg", "image/svg+xml"}, {NULL, "text/plain"}};
+    {"gif", "image/gif"},  {"svg", "image/svg+xml"},
+};
 
 // returns MIME type of given path
-const char *get_mime_type(const char *path) {
+char *get_mime_type(const char *path) {
   char *dot = strrchr(path, '.');
-  if(dot==path || !dot){
+  if (dot == path || !dot) {
     return "plain/text";
   }
-  const char* ext = dot+1; 
+  const char *ext = dot + 1;
 
-  for(int i = 0; i<sizeof(mime_type_map)/sizeof(mime_map); i++){
-    if(strcmp(ext, mime_type_map[i].ext) == 0){
+  for (long unsigned int i = 0; i < sizeof(mime_type_map) / sizeof(mime_map);
+       i++) {
+    if (strcmp(ext, mime_type_map[i].ext) == 0) {
       return mime_type_map[i].mime;
     }
   }
-  return "text/plain";
+  return "plain/text";
 }
 
 // decode url
