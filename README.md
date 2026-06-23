@@ -1,6 +1,6 @@
 # Dhruv HTTP Server 💻
 
-A barebones HTTP server written in **C** for Linux. This project is built from scratch with the primary goal of mastering sockets, low-level networking, and the core mechanics of the HTTP protocol. It's an educational project focused on providing a deep understanding of how web servers operate without the abstraction of modern frameworks.
+Built an HTTP/1.1 static file server in **C** using raw Linux sockets. Implemented TCP connection handling, HTTP request parsing, and static content serving to gain hands-on understanding of networking and systems programming fundamentals.
 
 ## ⚠️ Disclaimer: Educational and Experimental Project
 
