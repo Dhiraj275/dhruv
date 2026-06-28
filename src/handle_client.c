@@ -43,7 +43,14 @@ void send_400(int client_sock, http_request *req) {
   dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 400", req->method, req->uri);
 }
 void send_404(int client_sock, http_request *req) {
-  send(client_sock, "HTTP/1.1 404 File Not Found\r\n", 30, 0);
+  const char *response =
+        "HTTP/1.1 404 Not Found\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: 48\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        "<html><body><h1>404 Not Found</h1></body></html>";
+  send(client_sock,response,strlen(response),0);
   dv_log(LOG_ERROR, "'%s %s HTTP/1.1' 404", req->method, req->uri);
 }
 
